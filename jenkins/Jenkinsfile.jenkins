@@ -15,7 +15,7 @@ pipeline  {
             steps {
                 echo 'Creating docker image ...'
                 dir('.'){
-                    sh "docker build -t vasiazozulia/webschool . "
+                    sh "docker build -t khalilovske/webschool . "
                 }
             }
         }
@@ -33,7 +33,31 @@ pipeline  {
             steps {
                 echo " ============== pushing image =================="
                 sh '''
-                docker push vasiazozulia/webschool:latest
+                docker push khalilovske/webschool:latest
+                '''
+            }
+        }
+        stage("docker stop") {
+            steps {
+                echo " ============== stoping all containers =================="
+                sh '''
+                docker stop webschool 
+                '''
+            }
+        } 
+        stage("docker remove") {
+            steps {
+                echo " ============== removing all docker containers =================="
+                sh '''
+                docker rm webschool
+                '''
+            }
+        }
+        stage("docker run") {
+            steps {
+                echo " ============== starting telegram =================="
+                sh '''
+                docker run -d --restart=always --name webschool -p 80:3000  khalilovske/webschool
                 '''
             }
         }
